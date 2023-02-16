@@ -111,17 +111,21 @@ SELECT COUNT(ProductID), OrderID FROM OrderDetails
     GROUP BY OrderID
     HAVING COUNT(ProductID) > 3;
 
-
---24.Mostra els suppliers de les Ciutats que comencen per B que tenen productes amb un preu major a 50.
+-- PUEDO HACER ESTO CON INNER JOIN?
+--24.Mostra els suppliers de les Ciutats que comencen per B que tenen productes amb un preu major a 10.
 SELECT * FROM Suppliers, Products
     WHERE Suppliers.SupplierID = Products.ProductID
         AND City LIKE 'B%'
-        AND UnitPrice > 50;
+        AND UnitPrice > 10;
 
+select * from suppliers s 
+inner join products p
+where s.city like 'B%'
+and p.UnitPrice > 10;
 
 --25.Mostra els clients d’un país amb més de 7 lletres.
-SELECT * FROM Customers
-    LENGTH(Country) > 7;
+SELECT * FROM customers
+    WHERE LENGTH(country) > 7;
 
 
 --26.Mostra les ordres d’avui.
@@ -150,14 +154,24 @@ UNION
 
 --30.Les ID’s de les Ordres de 4 productes diferents o més indicant també el nom del client.
 SELECT CompanyName, ContactName, o.OrderID 
-    FROM OrderDetails, AS od,
-        Orders AS o,
-        Customers AS c
+    FROM OrderDetails od,
+        Orders o,
+        Customers c
     WHERE od.OrderID = o.OrderID
-        AND p.CustomerID = c.CustomerID
+        AND o.CustomerID = c.CustomerID
     GROUP BY OrderID
     ORDER BY COUNT(ProductID) DESC
-    LIMIT 1;
+    LIMIT 4;
+
+
+-- Esto es lo mimsmo que lo de arriba.
+SELECT CompanyName, ContactName, o.OrderID 
+FROM OrderDetails od
+INNER JOIN Orders o on od.OrderID = o.OrderID
+INNER JOIN customers c on o.CustomerID = c.CustomerID
+GROUP BY OrderID
+ORDER BY count(ProductID) DESC
+LIMIT 4;
 
 
 --31.Mostra l’ordre amb més quantitat de productes.
@@ -174,3 +188,93 @@ UNION
 
 --33.Retorna l’adreça, ciutat, codi postal i país de tots els clients (tot junts amb un camp).
 SELECT Address, City, PostalCode, Country FROM Customers;
+
+
+-------------------------------------------------------------------------------------------------------------
+-------------------------------------------------------------------------------------------------------------
+
+-- CUANDO DEBEMOS DE PONER ALIAS A LAS TABLAS?
+
+-- Porque no me deja?
+-- select ProductName, count(ProductID) from products
+--     where CategoryID = 2
+--         and UnitPrice > 20;
+--17.Fes el recompte de quants productes hi ha de la categoria 2 que tenen un preu > 20.
+select count(ProductID) from products
+    where CategoryID = 2
+        and UnitPrice > 20;
+
+--18.Fes una query que retorni la xifra del producte més car de la taula Products.
+select p.ProductName, MAX(UnitPrice) from products p;
+
+
+--19.Retorna el preu mig de la taula Products.*/
+select avg(UnitPrice) from Products;
+
+
+--20.Mostra la data de la primera l’ordre creada. Usa la taula Orders.
+select OrderDate from orders
+    order by OrderDate ASC
+    limit 1;
+
+--21.Mostra el preu de la Order 10255 (Price x quantitat de tots els productes).
+SELECT SUM(UnitPrice * Quantity) FROM OrderDetails
+    WHERE OrderID = 10255;
+
+--22.Mostra el numero de productes de cada Order.
+
+
+--23.Mostra el numero de productes de cada Order sempre que siguin mes de 3.
+
+
+--24.Mostra els suppliers de les Ciutats que comencen per B que tenen productes amb un preu major a 10.
+
+
+
+
+--25.Mostra els clients d’un país amb més de 7 lletres.
+
+
+--26.Mostra les ordres d’avui.
+
+
+--27.Mostra les ordres de febrer del 1997 del empleat 2.
+
+
+--28.Mostra la mitja de ordres per any.
+
+
+--29.Mostra el seu preu del producte més barat i el més car (2 Selects separats).
+
+
+
+--30.Les ID’s de les Ordres de 4 productes diferents o més indicant també el nom del client.
+
+
+-- Esto es lo mimsmo que lo de arriba.
+
+--31.Mostra l’ordre amb més quantitat de productes.
+
+
+--32.Mostra l’empleat més gran i el més petit (2 Selects separats).
+
+
+--33.Retorna l’adreça, ciutat, codi postal i país de tots els clients (tot junts amb un camp).
+
+
+
+
+
+
+
+
+-- Obtener el nombre de la categoria, nombre del producto y el companyname (de shippers)
+-- SELECT c.CategoryName, p.ProductName, s.CompanyName from categories c 
+-- INNER JOIN products p on c.CategoryID = p.CategoryID
+-- INNER JOIN orderdetails od on p.productID = od.productID
+-- INNER JOIN orders o on od.OrderID = o.orderID
+-- INNER JOIN shippers s on o.shipperVia = s.ShipperID;
+
+-- CREATE TABLE IF NOT EXIST
+
+

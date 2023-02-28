@@ -4,16 +4,16 @@ SELECT nombre INTO OUTFILE 'country.txt'
 FIELDS TERMINATED BY ',' OPTIONALLY ENCLOSED BY '"'
 LINES TERMINATED BY ';' FROM country;
 
-SELECT * INTO OUTFILE 'C:/Users/jose/Desktop/Work Space/M02 BBDD/UF3/newcountry.txt' 
+SELECT * INTO OUTFILE 'C:/Users/jose/Desktop/DEVELOPER/BBDD/UF3 BBDD SQL/newCountry.csv' 
 FIELDS TERMINATED BY ',' OPTIONALLY ENCLOSED BY '"' 
 LINES TERMINATED BY ';\n' FROM country;
 
-SELECT Name, count(city)INTO OUTFILE 'C:/Users/jose/Desktop/Work Space/M02 BBDD/UF3/country.csv'
+SELECT Name, count(city)INTO OUTFILE 'C:/Users/jose/Desktop/DEVELOPER/BBDD/UF3 BBDD SQL/country.csv'
 FIELDS TERMINATED BY ',' OPTIONALLY ENCLOSED BY '"'
 LINES TERMINATED BY ';\n' 
 FROM country where 'Europe';
 
-SELECT code, name, continent  INTO OUTFILE 'C:/Users/jose/Desktop/Work Space/M02 BBDD/UF3/country2.csv'
+SELECT code, name, continent  INTO OUTFILE 'C:/Users/jose/Desktop/DEVELOPER/BBDD/UF3 BBDD SQL/country2.csv'
 FIELDS TERMINATED BY ',' LINES TERMINATED BY ';\n' FROM country
 where continent;
 
@@ -39,12 +39,12 @@ CREATE TABLE IF NOT EXISTS Champions (
 ------------------------------------------------
 
 --Copiamos lo que hay en el fichero y lo introducimos en la bbdd
-LOAD DATA INFILE 'C:/Users/jose/Desktop/Work Space/M02 BBDD/UF3/LoL-Champions.csv'
+LOAD DATA INFILE 'C:/Users/jose/Desktop/DEVELOPER/BBDD/UF3 BBDD SQL/LoL-Champions.csv'
 INTO TABLE Champions FIELDS TERMINATED BY ';'
 LINES TERMINATED BY '\n';
 
 --Copiamos lo que hay en el fichero y lo introducimos en la bbdd pero ignorando la 1 linea
-LOAD DATA INFILE 'C:/Users/jose/Desktop/Work Space/M02 BBDD/UF3/LoL-Champions-con-cabecera.csv'
+LOAD DATA INFILE 'C:/Users/jose/Desktop/DEVELOPER/BBDD/UF3 BBDD SQL/LoL-Champions-con-cabecera.csv'
 INTO TABLE Champions FIELDS TERMINATED BY ','
 LINES TERMINATED BY '\n' IGNORE 1 LINES;
 
@@ -89,17 +89,62 @@ INSERT INTO bkp_territories SELECT * FROM northwind.territories;
 ------------------------------------------------
 
 --Para crear un fichero con solo los nombres de las columnas de una bbdd
-SELECT table_name INTO OUTFILE 'C:/Users/jose/Desktop/Work Space/M02 BBDD/UF3/soloNombres.csv' 
+SELECT table_name INTO OUTFILE 'C:/Users/jose/Desktop/DEVELOPER/BBDD/UF3 BBDD SQL/soloNombres.csv' 
 LINES TERMINATED BY '\n'
 FROM information_schema.tables 
 WHERE table_schema = "bkp_northwind"
 AND table_type = "base table";
 
 --Para crear un fichero con los nombres, numero de filas y fecha de creacion de de una bbdd
-SELECT table_name, table_rows, create_time INTO OUTFILE 'C:/Users/jose/Desktop/Work Space/M02 BBDD/UF3/nombresFilasFecha.csv' 
+SELECT table_name, table_rows, create_time INTO OUTFILE 'C:/Users/jose/Desktop/DEVELOPER/BBDD/UF3 BBDD SQL/NombresFilasFecha.csv' 
 FIELDS TERMINATED BY ','
 OPTIONALLY ENCLOSED BY '"'
 LINES TERMINATED BY ';\n'
 FROM information_schema.tables
 WHERE table_schema = "bkp_northwind"
 AND table_type = "base table";
+
+
+--Para una base de datos con la tabla de país (id (PK), nombre_pais, y habitantes), devuelve un archivo 
+--con el nombre de cada país y el porcentaje de habitantes que cada uno tiene sobre el total. 
+CREATE DATABASE s5_ej3;
+USE s5_ej3;
+CREATE TABLE pais(
+    id INTEGER AUTO_INCREMENT,
+    nombre_pais VARCHAR(20),
+    habitantes INTEGER,
+    PRIMARY KEY (id)
+);
+INSERT INTO pais (nombre_pais, habitantes) VALUES
+("Irlanda",4500000),
+("Suecia",1000000),
+("Dinamarca",5600000);
+SELECT nombre_pais, habitantes/(SELECT sum(habitantes) FROM pais)*100
+  INTO OUTFILE 'C:/Users/jose/Desktop/DEVELOPER/BBDD/UF3 BBDD SQL/ej3.csv'
+  FIELDS TERMINATED BY ','
+  LINES TERMINATED BY ';\n'
+  FROM pais;
+ 
+
+--Para una base de datos con la tabla de cuentas bancarias (numero_cuenta (PK), saldo) devuelve en 
+--un archivo aquellos números de cuenta que estén en números rojos junto con su saldo 
+--correspondiente. 
+CREATE DATABASE s5_ej4;
+USE s5_ej4;
+
+CREATE TABLE cuenta_bancaria(
+    numero_cuenta INTEGER,
+    saldo DOUBLE,
+    PRIMARY KEY (numero_cuenta)
+);
+INSERT INTO cuenta_bancaria(numero_cuenta, saldo) VALUES
+(1,-100),
+(2,2000),
+(3,0);
+
+SELECT *
+  INTO OUTFILE 'C:/Users/jose/Desktop/DEVELOPER/BBDD/UF3 BBDD SQL/ej4.csv'
+  FIELDS TERMINATED BY ','
+  LINES TERMINATED BY ';\n'
+  FROM cuenta_bancaria
+  WHERE saldo < 0;

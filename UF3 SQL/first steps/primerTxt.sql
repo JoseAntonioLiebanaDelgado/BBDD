@@ -148,3 +148,6 @@ SELECT *
   LINES TERMINATED BY ';\n'
   FROM cuenta_bancaria
   WHERE saldo < 0;
+
+
+  

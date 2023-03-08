@@ -38,7 +38,8 @@ CREATE TABLE IF NOT EXISTS Champions (
 
 ------------------------------------------------
 
---Copiamos lo que hay en el fichero y lo introducimos en la bbdd
+--La instrucción LOAD DATA INFILE carga los datos desde un archivo CSV ubicado en C:/Users/jose/Desktop/DEVELOPER/BBDD/UF3 BBDD SQL/LoL-Champions.csv
+--en la tabla Champions de la base de datos.
 LOAD DATA INFILE 'C:/Users/jose/Desktop/DEVELOPER/BBDD/UF3 BBDD SQL/LoL-Champions.csv'
 INTO TABLE Champions FIELDS TERMINATED BY ';'
 LINES TERMINATED BY '\n';
@@ -50,12 +51,20 @@ LINES TERMINATED BY '\n' IGNORE 1 LINES;
 
 ------------------------------------------------
 
---Con esto copiamos las tablas de la base Northwind y las pegamos en la bbdd de bkp_northwind
+--La instrucción DROP DATABASE IF EXISTS bkp_northwind elimina la base de datos bkp_northwind si ya existe. 
+--La cláusula IF EXISTS evita que se produzca un error si la base de datos no existe.
 DROP DATABASE IF EXISTS bkp_northwind;
+
+--La instrucción CREATE DATABASE bkp_northwind crea una nueva base de datos llamada bkp_northwind.
 CREATE DATABASE bkp_northwind;
 
---Copiar
+--La instrucción USE northwind cambia el contexto de la base de datos actual a northwind.
 USE northwind;
+
+--Las siguientes instrucciones crean tablas con el mismo esquema que las tablas de la base de datos northwind, pero en la base de datos bkp_northwind. 
+--Por ejemplo, CREATE TABLE bkp_northwind.bkp_categories LIKE categories crea una tabla llamada bkp_categories en la base de datos bkp_northwind con 
+--el mismo esquema que la tabla categories en la base de datos northwind. Esto se repite para todas las tablas de la base de datos northwind.
+--En resumen, estas instrucciones crean una copia de seguridad de la base de datos northwind en la base de datos bkp_northwind.
 CREATE TABLE bkp_northwind.bkp_categories LIKE categories;
 CREATE TABLE bkp_northwind.bkp_customercustomerdemo LIKE customercustomerdemo;
 CREATE TABLE bkp_northwind.bkp_customerdemographics LIKE customerdemographics;
@@ -70,7 +79,12 @@ CREATE TABLE bkp_northwind.bkp_shippers LIKE shippers;
 CREATE TABLE bkp_northwind.bkp_suppliers LIKE suppliers;
 CREATE TABLE bkp_northwind.bkp_territories LIKE territories;
 
---Pegar
+--Estas instrucciones de SQL insertan datos en las tablas de la base de datos bkp_northwind, que se crearon previamente con la misma estructura
+--que las tablas de la base de datos northwind.
+--Cada instrucción INSERT INTO toma los datos de una tabla de northwind y los inserta en la tabla correspondiente de bkp_northwind. 
+--Por ejemplo, la instrucción INSERT INTO bkp_categories SELECT * FROM northwind.categories inserta todas las filas de la tabla categories en la base 
+--de datos northwind en la tabla bkp_categories de la base de datos bkp_northwind. Esto se repite para todas las tablas de la base de datos northwind.
+--En resumen, estas instrucciones copian los datos de la base de datos northwind en la base de datos de respaldo bkp_northwind.
 USE bkp_northwind;
 INSERT INTO bkp_categories SELECT * FROM northwind.categories;
 INSERT INTO bkp_customercustomerdemo SELECT * FROM northwind.customercustomerdemo;

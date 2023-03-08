@@ -90,6 +90,64 @@ CALL wCountryLanguageInfo('Catalan');
 
 /*5. També a la BD World, modifica l'exercici anterior per fer que el nom del fitxer 
 resultant sigui: NOM_LLENGUA.txt on NOM_LLENGUA òbviament s'adapta al valor de a llengua passada per paràmetre, no en text literal.*/
+DELIMITER $$
+DROP PROCEDURE IF EXISTS wCountryLanguageInfoToFile $$
+CREATE PROCEDURE wCountryLanguageInfoToFile (IN vLanguage varchar(50))
+BEGIN
+    SET @aux = CONCAT("SELECT co.name INTO OUTFILE '",vLanguage,".txt'
+        FIELDS TERMINATED BY ','
+        LINES TERMINATED BY '\n' 
+        FROM country AS co, countrylanguage AS cl 
+        WHERE co.code = cl.countrycode
+            AND cl.language = '", vLanguage, "'");
+    PREPARE stmt1 FROM @aux;
+    EXECUTE stmt1;
+    DEALLOCATE PREPARE stmt1;
+END $$
+DELIMITER ;
+
+CALL wCountryLanguageInfoToFile('Catalan');
 
 /*6. A la BD World, donada la id d'un país, mostra per pantalla quants idiomes s'hi parlen així com el número de ciutats que té. 
 Aquests dos valors també s'han de passar com a paràmetres de sortida */
+DELIMITER $$
+DROP PROCEDURE IF EXISTS wCountryStats $$
+CREATE PROCEDURE wCountryStats (IN vCode VARCHAR(30), OUT vNumLanguages INT, OUT vNumCities INT)
+BEGIN
+    SET vNumLanguages = (SELECT COUNT(cl.language) FROM CountryLanguage AS cl WHERE cl.countrycode = vCode);
+
+    SET vNumCities = (SELECT COUNT(ci.id) FROM city AS ci WHERE ci.countrycode = vCode);
+
+    SELECT CONCAT('Estadístiques de: ',vCode ,' --> Llengues: ', vNumLanguages,' Idiomes: ', vNumCities);
+
+END $$
+DELIMITER ;
+
+CALL wCountryStats('AND', @numlang, @numcity);
+SELECT @numlang;
+SELECT @numcity;
+
+
+/*7. A la BD World, crea un procedure que permeti exportar les dades de la taula CountryLanguage. 
+El nom del fitxer ha de ser passat per paràmetre a gust de l'usuari.*/
+DELIMITER $$
+DROP PROCEDURE IF EXISTS wCountryLanguageExporter $$
+CREATE PROCEDURE wCountryLanguageExporter (IN vFile varchar(200))
+BEGIN
+	SET @vCountFiles = (SELECT COUNT(*) FROM CountryLanguage);
+	IF @vCountFiles = 0 THEN
+	SET @aux = CONCAT ("SELECT 'No hi ha files' INTO OUTFILE '",vFile,".csv' FIELDS TERMINATED BY ',' LINES TERMINATED BY ';\n'");
+	PREPARE stmt1 FROM @aux;
+	EXECUTE stmt1;
+	DEALLOCATE PREPARE stmt1;
+	ELSE
+	SET @aux = CONCAT ("SELECT * FROM CountryLanguage INTO OUTFILE '", vFile, ".csv' FIELDS TERMINATED BY ',' LINES TERMINATED BY ';\n'");
+	PREPARE stmt1 FROM @aux;
+	EXECUTE stmt1;
+	DEALLOCATE PREPARE stmt1;
+	END IF;
+END $$
+DELIMITER ;
+
+--Crida Tipus
+CALL wCountryLanguageExporter('C:/Users/Alumne/Downloads/CountryLanguage-Export.txt');

@@ -1,5 +1,5 @@
 
-# En SQL, SELECT INTO y SELECT INTO OUTFILE son dos instrucciones diferentes que tienen funciones distintas.<a name="SELECT INTO y SELECT INTO OUTFILE"></a>
+En SQL, SELECT INTO y SELECT INTO OUTFILE son dos instrucciones diferentes que tienen funciones distintas.
 La instrucción SELECT INTO se utiliza para crear una tabla nueva a partir de los resultados de una consulta SELECT. 
 La sintaxis general de SELECT INTO es la siguiente:
 

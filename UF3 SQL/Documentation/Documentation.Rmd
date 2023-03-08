@@ -1,0 +1,24 @@
+
+# En SQL, SELECT INTO y SELECT INTO OUTFILE son dos instrucciones diferentes que tienen funciones distintas.<a name="SELECT INTO y SELECT INTO OUTFILE"></a>
+La instrucción SELECT INTO se utiliza para crear una tabla nueva a partir de los resultados de una consulta SELECT. 
+La sintaxis general de SELECT INTO es la siguiente:
+
+SELECT column1, column2, ...
+INTO new_table_name
+FROM existing_table_name
+WHERE condition;
+Esta consulta selecciona las columnas especificadas de la tabla existing_table_name que cumplen la condición especificada en el WHERE, 
+y luego crea una nueva tabla llamada new_table_name con esos datos.
+
+Por otro lado, la instrucción SELECT INTO OUTFILE se utiliza para exportar los resultados de una consulta SELECT a un archivo en el sistema de archivos del servidor. 
+La sintaxis general de SELECT INTO OUTFILE es la siguiente:
+
+SELECT column1, column2, ...
+INTO OUTFILE '/path/to/file.csv'
+FIELDS TERMINATED BY ',' OPTIONALLY ENCLOSED BY '"'
+LINES TERMINATED BY '\n'
+FROM existing_table_name
+WHERE condition;
+Esta consulta selecciona las columnas especificadas de la tabla existing_table_name que cumplen la condición especificada en el WHERE, 
+y luego escribe los datos en el archivo /path/to/file.csv. Los parámetros FIELDS TERMINATED BY ',' y LINES TERMINATED BY '\n' especifican el delimitador de campos 
+y el delimitador de líneas del archivo CSV, respectivamente.

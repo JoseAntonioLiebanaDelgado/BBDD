@@ -128,3 +128,4 @@ Gracias a esta base de datos podemos obtener información muy valiosa utilizando
 Puede recuperar el nombre de todas las tablas de una base de datos o recuperar las claves foranas (FK) de una base de datos.
 
 -------------------------------------------------------------
+

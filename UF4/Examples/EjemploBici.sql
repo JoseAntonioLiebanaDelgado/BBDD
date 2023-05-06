@@ -31,6 +31,7 @@ CREATE OR REPLACE TYPE Bici AS OBJECT(
 	Aquesta barra permet executar més d'un bloc de codi
 	Ens mostra un error de 'Unsupported Command' però no cal donar-li importància.
 */
+
 /
 	
 /*

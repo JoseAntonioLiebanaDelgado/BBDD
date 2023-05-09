@@ -1,81 +1,109 @@
--- Crea un tipo de objeto person_t que permita la definición de subtipos y pueda almacenar:
--- • Idno: entero
--- • name caracter (30)
--- • surname caracter (30)
--- • Birth: fecha
--- • phone caracter
--- Y los siguientes métodos.
--- • get_datos: método que devuelve una string con el name, surname y phone
--- • get_fecha: método que permita la ordenación de personas por su birth (MAP).
+-- Ejecutar el DROP solo si ya tenemos la tabla/tipo creada/crados y nos da algun tipo de error! ;)
 
+DROP TABLE personas_table;
+/
+DROP TYPE student_parcial_t;
+/
+DROP TYPE student_t;
+/
+DROP TYPE person_t;
+/
 
 CREATE OR REPLACE TYPE person_t AS OBJECT (
-    idno NUMBER,
-    name VARCHAR2(30),
-    surname VARCHAR2(30),
-    birth DATE,
-    phone VARCHAR2(30),
-    MAP MEMBER FUNCTION get_datos RETURN VARCHAR2,
-    MAP MEMBER FUNCTION get_fecha RETURN DATE
+  idno INTEGER,
+  name VARCHAR2(30),
+  surname VARCHAR2(30),
+  birth DATE,
+  phone VARCHAR2(9),
+  MEMBER FUNCTION get_datos RETURN VARCHAR2,
+  FINAL MAP MEMBER FUNCTION get_fecha RETURN DATE
 ) NOT FINAL;
 
-
--- Crea un subtipo de person_t denominado student_t que permita la definición de subtipos y
--- pueda almacenar:
--- • college: carácter (30)
--- • averageScore: integer
--- Debe sobrescribir el método get_datos mostrando name, surname, phone, college y
--- averageScore
-
+/
 
 CREATE OR REPLACE TYPE student_t UNDER person_t (
-    college VARCHAR2(30),
-    averageScore NUMBER,
-    OVERRIDING MEMBER FUNCTION get_datos RETURN VARCHAR2
-);
+  college VARCHAR2(30),
+  averageScore NUMBER,
+  OVERRIDING MEMBER FUNCTION get_datos RETURN VARCHAR2
+) NOT FINAL;
 
-
--- Crea un subtipo de student_t denominado student_parcial_t que pueda almacenar:
--- • numHours: integer
--- Debe sobrescribir el método get_datos mostrando name, surname, phone, college y
--- averageScore y numHours
--- En un bloque PL/SQL,
-
+/
 
 CREATE OR REPLACE TYPE student_parcial_t UNDER student_t (
-    numHours NUMBER,
-    OVERRIDING MEMBER FUNCTION get_datos RETURN VARCHAR2
+  numHours INTEGER,
+  OVERRIDING MEMBER FUNCTION get_datos RETURN VARCHAR2
 );
 
+/
 
--- a) Crea un objeto tipo student_t y otro student_parcial_t. Usa el método get_datos para
--- mostrar en pantalla los datos de cada uno de ellos. Muestra por pantalla también cuál
--- de ellos es más joven.
+CREATE OR REPLACE TYPE BODY person_t AS
+  MEMBER FUNCTION get_datos RETURN VARCHAR2 IS
+  BEGIN
+      RETURN 'name: '||SELF.name||' surname: '||SELF.surname||' phone : '||SELF.phone;
+  END;
+  FINAL MAP MEMBER FUNCTION get_fecha RETURN DATE IS
+  BEGIN
+      RETURN birth;
+  END;
+END;
 
+/
 
 CREATE OR REPLACE TYPE BODY student_t AS
-    OVERRIDING MEMBER FUNCTION get_datos RETURN VARCHAR2 IS
-    BEGIN
-        RETURN name || ' ' || surname || ' ' || phone || ' ' || college || ' ' || averageScore;
-    END;
+  OVERRIDING MEMBER FUNCTION get_datos RETURN VARCHAR2 IS
+  BEGIN
+    RETURN 'name: '||SELF.name||' surname: '||SELF.surname||' phone : '||SELF.phone||' college: '||SELF.college||' averageScore: '||SELF.averageScore;
+  END;
 END;
+
+/
 
 CREATE OR REPLACE TYPE BODY student_parcial_t AS
-    OVERRIDING MEMBER FUNCTION get_datos RETURN VARCHAR2 IS
-    BEGIN
-        RETURN name || ' ' || surname || ' ' || phone || ' ' || college || ' ' || averageScore || ' ' || numHours;
-    END;
+  OVERRIDING MEMBER FUNCTION get_datos RETURN VARCHAR2 IS
+  BEGIN
+    RETURN 'name: '||SELF.name||' surname: '||SELF.surname||' phone : '||SELF.phone||' college: '||SELF.college||' averageScore: '||SELF.averageScore||' numHours: '||SELF.numHours;
+  END;
 END;
 
+/
+
+-- a)
+SET SERVEROUTPUT ON
 DECLARE
-    student student_t := student_t(1, 'Name', 'Surname', SYSDATE, 'Phone', 'College', 10);
-    student_parcial student_parcial_t := student_parcial_t(2, 'Name', 'Surname', SYSDATE, 'Phone', 'College', 10, 20);
+  student student_t;
+  student_parcial student_parcial_t;
 BEGIN
-    DBMS_OUTPUT.PUT_LINE(student.get_datos);
-    DBMS_OUTPUT.PUT_LINE(student_parcial.get_datos);
-    IF student.birth < student_parcial.birth THEN
-        DBMS_OUTPUT.PUT_LINE('student es más joven');
-    ELSE
-        DBMS_OUTPUT.PUT_LINE('student_parcial es más joven');
-    END IF;
+  student:= student_t(1,'AA','BBB','30-APR-1997','931112233','La Salle Gracia',8);
+  student_parcial:= student_parcial_t(2,'CC','DD','18-APR-1995','931112233','MIT',9,6);
+  DBMS_OUTPUT.PUT_LINE(student.get_datos());
+  DBMS_OUTPUT.PUT_LINE(student_parcial.get_datos());
+  IF (student > student_parcial) THEN 
+    DBMS_OUTPUT.PUT_LINE('El alumno student es mas grande que el student_parcial');
+  ELSE 
+    DBMS_OUTPUT.PUT_LINE('El alumno student_parcial es mas grande que el student');
+  END IF;
 END;
+
+/
+-- b)
+CREATE TABLE personas_table OF person_t (idno PRIMARY KEY);
+/
+INSERT INTO personas_table VALUES(person_t(12,'ISMAEL','BELTRAN','15-FEB-1995','22446688'));
+/
+INSERT INTO personas_table VALUES(person_t(27,'BERTA','MATEO','23-SEP-1991','22446688'));
+/
+INSERT INTO personas_table VALUES(person_t(29,'GONZALO','CASANOVA','06-MAY-1993','22446688'));
+/
+INSERT INTO personas_table VALUES(student_t(15,'FRANCISCO','SUAREZ','15-FEB-1990','22446688','LA SALLE',9));
+/
+INSERT INTO personas_table VALUES(student_t(20,'JOSE','PEREZ','23-SEP-1992','22446688','LA SALLE',7));
+/
+INSERT INTO personas_table VALUES(student_parcial_t(24,'JAVIER','GARCIA','20-MAY-1990','22446688','LA SALLE',8,317));
+/
+INSERT INTO personas_table VALUES(student_parcial_t(25,'ELENA','CASTELLANOS','23-NOV-1990','22446688','LA SALLE',9,317));
+/
+-- c)
+SELECT p.* FROM personas_table p WHERE VALUE(p) IS OF (student_t) ORDER BY p.birth;
+/
+-- d)
+SELECT p.* FROM personas_table p WHERE VALUE(p) IS OF (student_parcial_t) ORDER BY p.birth;

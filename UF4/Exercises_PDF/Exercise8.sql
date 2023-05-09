@@ -86,6 +86,8 @@ DROP TYPE producto_t;
 /
 
 --8.1
+-- Implementa la función MAP en categoria_T para que el atributo que decida la ordenación
+-- sea el nombre de la categoría.
 CREATE OR REPLACE TYPE categoria_t AS OBJECT(
   id_number NUMBER,
   nombre VARCHAR2(20),
@@ -120,6 +122,8 @@ END;
 /
 
 -- 8.2
+-- Implementa la función MAP en proveedor_T para que el atributo que decida la
+-- ordenación sea el CIF
 CREATE OR REPLACE TYPE proveedor_t AS OBJECT(
   id_number NUMBER,
   nombre VARCHAR2(20),
@@ -129,6 +133,9 @@ CREATE OR REPLACE TYPE proveedor_t AS OBJECT(
 
 /
 
+-- Con esto estamos diciendo que el tipo categoria_t tiene una función map 
+-- que devuelve un varchar2. Se ordena por el nombre de la 
+-- categoría de manera ascendente.
 CREATE OR REPLACE TYPE BODY proveedor_t AS
   MAP MEMBER FUNCTION ordenarCif RETURN VARCHAR2 IS
   BEGIN
@@ -155,6 +162,9 @@ END;
 /
 
 -- 8.3
+-- Implementa la función ORDER en NOTICIA_T. Se deben considerar menores los que
+-- tengan una fecha de publicación anterior y, mayores, los tengan una fecha de
+-- publicación más reciente
 CREATE OR REPLACE TYPE noticia_t AS OBJECT(
   codigo NUMBER,
   fecha DATE,

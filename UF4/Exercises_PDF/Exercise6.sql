@@ -24,13 +24,12 @@ DECLARE
     Proveidor_1 proveedor_t;
     Categoria_1 categoria_t;
     Producte_1 producto_t;
-    BEGIN
-        Proveidor_1 := NEW proveedor_t(1, 'Proveïdor 1', 'Barcelona');
-        Categoria_1 := NEW categoria_t(1, 'Producte fresc');
-        Producte_1 := NEW producto_t(1, 'Salmó norueg', 5.25, 21, Categoria_1, Proveidor_1);
-        DBMS_OUTPUT.PUT_LINE(Producte_1.cat.nombre);
-        DBMS_OUTPUT.PUT_LINE('El precio final es: ' || Producte_1.calcularPrecioFinal());
-    END
+BEGIN
+    Proveidor_1 := NEW proveedor_t(1, 'Proveïdor 1', 'Barcelona');
+    Categoria_1 := NEW categoria_t(1, 'Producte fresc');
+    Producte_1 := NEW producto_t(1, 'Salmó norueg', 5.25, 21, Categoria_1, Proveidor_1);
+    DBMS_OUTPUT.PUT_LINE(Producte_1.cat.nombre);
+    DBMS_OUTPUT.PUT_LINE('El precio final es: ' || Producte_1.calcularPrecioFinal());
 END;
 
 /
@@ -52,11 +51,10 @@ CREATE OR REPLACE TYPE BODY productos AS
 END;
 
 
-
-
 --------------------------------------------------------------------------------------------
 
 
+-- Creamos el Type proveedor_t para poder acceder a los atributos de otros objetos
 CREATE OR REPLACE TYPE proveedor_t AS OBJECT(
   id NUMBER,
   nombre VARCHAR2(50),
@@ -65,6 +63,7 @@ CREATE OR REPLACE TYPE proveedor_t AS OBJECT(
 
 /
 
+-- Creamos el Type categoria_t para poder acceder a los atributos de otros objetos
 CREATE OR REPLACE TYPE categoria_t AS OBJECT(
   id NUMBER,
   nombre VARCHAR2(50)
@@ -72,6 +71,7 @@ CREATE OR REPLACE TYPE categoria_t AS OBJECT(
 
 /
 
+-- Creamos el Type producto_t con los atributos price y tax
 CREATE OR REPLACE TYPE producto_t AS OBJECT(
   id NUMBER,
   nombre VARCHAR2(80),
@@ -84,6 +84,7 @@ CREATE OR REPLACE TYPE producto_t AS OBJECT(
 
 /
 
+-- Creamos el Type Body de producto_t con la función calcPrecioFinal
 CREATE OR REPLACE TYPE BODY producto_t AS
   MEMBER FUNCTION calcPrecioFinal RETURN NUMBER IS
   BEGIN
@@ -93,7 +94,7 @@ END;
 
 /
 
-set serveroutput on;
+-- Creamos un bloque PL/SQL para probar el Type producto_t
 DECLARE
   p producto_t;
 BEGIN

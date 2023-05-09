@@ -34,7 +34,7 @@ create or replace type vivienda_t under inmueble_t (
   tiene_ascensor boolean,
   overriding member function to_string1 return varchar2,
   member function to_string2 return varchar2
-);
+); 
 
 
 -- Crea los tipos y subtipos necesarios, permitiendo almacenar la información citada. Los

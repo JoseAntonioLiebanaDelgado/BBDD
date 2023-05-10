@@ -1,0 +1,28 @@
+-- Una empresa de ingeniería dispone en su plantilla de una relación de jefes de proyecto. La
+-- empresa se encarga de redactar proyectos. Un proyecto viene definido por su nombre, por
+-- ejemplo “PROYECTO ACONDICIONAMIENTO CARRETERA CV-70 TRAMO PK 0+000 A
+-- PK1+500” y la fecha de finalización o de entrega.
+-- Cada proyecto tiene asociado un conjunto de planos. Un plano viene definido por un título y
+-- los nombres de los ingenieros firmantes. Como máximo un plano puede estar firmado por 2
+-- ingenieros.
+-- Se desea disponer de una tabla de jefes de proyecto con su nombre y teléfono, y una tabla de
+-- proyectos con el nombre del proyecto, la fecha de finalización y el jefe de proyecto asignado.
+-- Tener en cuenta que un proyecto está dirigido por un jefe de proyecto (un proyecto siempre
+-- está asignado a un jefe de proyecto) y un jefe de proyecto puede dirigir 0 o varios proyectos.
+-- Construye los tipos de objetos necesarios, así como las tablas, haciendo uso de referencias
+-- a objetos. Inserta registros en las tablas de jefes de proyecto y de proyectos.
+-- Sobre uno de los proyectos de la tabla de proyectos que hayas definido:
+-- a) Introduce los siguientes planos:
+-- ID TITULO INGENIEROS FIRMANTES
+-- 01 SITUACION Y EMPLAZAMIENTO Ingeniero A, Ingeniero B
+-- 02 SERVICIOS AFECTADOS Ingeniero C, Ingeniero D
+-- 03 SEGURIDAD Y SALUD Ingeniero E, Ingeniero F
+-- b) Actualiza la tabla para que en el plano 02, sólo este como ingeniero firmante ‘Ingeniero
+-- C’
+-- c) Introduce un nuevo plano con los siguientes datos:
+-- ID TITULO INGENIEROS FIRMANTES
+-- 04 REPLANTEO INICIAL Ingeniero G, Ingeniero H
+-- d) Actualiza el título del plano con id=02 para que sea ‘SERVICIOS AFECTADOS EN RED
+-- DE
+-- TELEFONIA’
+-- e) Elimina el plano cuyo título es ‘SEGURIDAD Y SALUD’

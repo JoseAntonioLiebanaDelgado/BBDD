@@ -1,4 +1,4 @@
--- Al tipo que has creado para almacenar productos del ejercicio 2, añádele dos atributos:
+-- Al tipo que has creado para almacenar productos del ejercicio 3, añádele dos atributos:
 -- price y tax. Crea una función nueva que calcule el precio final de este producto teniendo en
 -- cuenta el precio base del producto (price) y la tasa asociada (tax). Tened en cuenta que tax
 -- se da en porcentaje: si es 15, se refiere a que es el 15%.

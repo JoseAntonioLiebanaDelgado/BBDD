@@ -39,7 +39,7 @@ CREATE OR REPLACE TYPE Bici AS OBJECT(
 	Definició dels constructors, funcions i mètodes declarats en el TYPE anterior.
 */
 CREATE OR REPLACE TYPE BODY Bici AS
-	-- Definim constructor amb dos paràmetres concrets
+	-- Definim constructor amb 4 paràmetres concrets
 	CONSTRUCTOR FUNCTION Bici (p_marca VARCHAR2, p_model VARCHAR2, p_pes FLOAT, p_preu FLOAT) RETURN SELF AS RESULT IS
 		BEGIN
 			SELF.marca := p_marca;
@@ -49,8 +49,10 @@ CREATE OR REPLACE TYPE BODY Bici AS
 	-- Definició MAP MEMBER FUNCTION
 	MAP MEMBER FUNCTION funcioOrdenar RETURN FLOAT IS
 	    BEGIN
+		-- si el preu o el pes és NULL, retornem 0
 	        IF SELF.Preu IS NULL OR SELF.Pes IS NULL THEN
 	            RETURN 0;
+		-- si no, retornem el resultat de la divisió
             ELSE
 	            RETURN SELF.Preu / SELF.Pes;
             END IF;

@@ -38,7 +38,7 @@ CREATE OR REPLACE TYPE BODY noticia_t AS
     END;
     MEMBER PROCEDURE to_string IS
     BEGIN
-        -- El to char se utiliz para poder convertir el codigo y el numero en una cadena de caracteres
+        -- El to char se utiliza para poder convertir el codigo y el numero en una cadena de caracteres
         -- para poder concatenarlo con los demas elementos. 
         -- Date se puede convertir a string sin necesidad de utilizar el to_char.
         DBMS_OUTPUT.PUT_LINE(TO_CHAR(codigo)||' '||fecha||' '||TO_CHAR(num_dias_publicado)||' '||texto);

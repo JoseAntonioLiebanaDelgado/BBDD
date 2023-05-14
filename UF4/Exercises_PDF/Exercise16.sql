@@ -5,50 +5,67 @@
 -- además su nombre y dirección. De cada mascota se quiere almacenar su identificador
 -- (único), fecha de nacimiento, raza y el veterinario asignado. Se desea disponer de 2 tablas en
 -- la base de datos para las mascotas y para los veterinarios.
+
+-----------------------------------------------------------------------------------------------------------------------
+
 -- a) Construye los tipos de objetos necesarios, así como las tablas, haciendo uso de
 -- referencias a objetos.
--- b) Inserta registros en las tablas
--- c) Realiza una consulta de la fecha de nacimiento e identificador de las mascotas
--- asignadas a un determinado veterinario
 
-
-CREATE OR REPLACE TYPE veterinari_t AS OBJECT(
-  num_colegiat NUMBER,
-  name VARCHAR2(20),
-  direccion VARCHAR2(20)
+create or replace type veterinari_t as object(
+    num_colegiat number,
+    name varchar2(20),
+    direccion varchar2(20)
 );
+
+/
+
+create or replace type mascota_t as object(
+    idmas integer,
+    fecha_nacimiento date,
+    raza varchar2(20),
+    vet ref veterinari_t
+);
+
+/
+
+-----------------------------------------------------------------------------------------------------------------------
+
+-- b) Inserta registros en las tablas
+
+create table veterinari_tbl of veterinari_t (num_colegiat primary key);
 
 / 
 
-CREATE OR REPLACE TYPE mascota_t AS OBJECT(
-  idmas INTEGER,
-  fecha_nacimiento DATE,
-  raza VARCHAR2(20),
-  vet REF veterinari_t
-);
+create table mascota_tbl of mascota_t (idmas primary key);
 
 /
 
-CREATE TABLE veterinari_tbl OF veterinari_t (num_colegiat PRIMARY KEY);
+-- Ponemos veterinari_t dentro del primer parentesi para que se cree la tabla con el tipo de objeto veterinari_t
+insert into veterinari_tbl values (veterinari_t(123, 'Vet1', 'C/abc 12'));
 
 /
 
-CREATE TABLE mascota_tbl OF mascota_t (idmas PRIMARY KEY);
+-- Ponemos veterinari_t dentro del primer parentesi para que se cree la tabla con el tipo de objeto veterinari_t
+insert into veterinari_tbl values (veterinari_t(456, 'Vet2', 'C/def 34'));
 
 /
 
-INSERT INTO veterinari_tbl VALUES (veterinari_t(123,'Vet1','C/abc 12'));
+-- Esto traducido al español seria:
+-- Insertamos en la tabla mascota_tbl los valores 1, '12-APR-2017', 'oso panda' y seleccionamos la referencia 
+-- del veterinario con el numero de colegiado 123. La (v) es una variable que se crea para poder hacer la referencia.
+insert into mascota_tbl values (1, '12-APR-2017', 'oso panda', (select ref(v) from veterinari_tbl v where v.num_colegiat=123));
 
 /
 
-INSERT INTO veterinari_tbl VALUES (veterinari_t(456,'Vet2','C/def 34'));
+insert into mascota_tbl VALUES (2,'22-APR-2016','perro',(SELECT REF(v) FROM veterinari_tbl v WHERE v.num_colegiat=123));
 
 /
 
-INSERT INTO mascota_tbl VALUES (1,'12-APR-2017','oso panda',(SELECT REF(v) FROM veterinari_tbl v WHERE v.num_colegiat=123));
+-----------------------------------------------------------------------------------------------------------------------
 
-/
+-- c) Realiza una consulta de la fecha de nacimiento e identificador de las mascotas
+-- asignadas a un determinado veterinario
 
-INSERT INTO mascota_tbl VALUES (2,'22-APR-2016','perro',(SELECT REF(v) FROM veterinari_tbl v WHERE v.num_colegiat=123));
-
+-- Esto traducido al español seria:
+-- Seleccionamos la fecha de nacimiento y el identificador de las mascotas que estan asignadas a un determinado veterinario.
 SELECT m.fecha_nacimiento, m.idmas FROM mascota_tbl m WHERE m.vet = (SELECT REF(v) FROM veterinari_tbl v WHERE v.num_colegiat=123);

@@ -1,116 +1,128 @@
+-- Este programa crea un TYPE Bici, un TYPE BODY Bici, una taula bicicletes 
+-- i una fila a la taula bicicletes.
+-- type bici lo creamos con un constructor con dos parámetros concretos
+-- type body bici lo creamos con un constructor con dos parámetros concretos
+-- la tabla bicicletes tiene una columna de tipo complejo (Bici)
+-- la fila de la tabla bicicletes la insertamos con un constructor con dos parámetros concretos
+-- la fila de la tabla bicicletes la recuperamos con un SELECT INTO
+-- Utilizamos el mapper para ordenar por precio
+
+
 -- Bici MAP + STATIC + COLUMN TYPE BiciFitxer
-
-
-/*
-	TYPE Bici:
-	Declaració dels atributs i mètodes de la classe Bici
-	Tal i com es pot observar, no s'especifica nombre de dígits en els tipus de dades dels paràmetres dels mètodes.
-*/
-CREATE OR REPLACE TYPE Bici AS OBJECT(
-    id NUMBER(4),
-    marca VARCHAR2(30),
-    model VARCHAR2(30),
-    tipus VARCHAR2(20),
-    es_professional NUMBER(1),
-    pes FLOAT,
-    preu FLOAT,
-	-- Declarem constructor
-    CONSTRUCTOR FUNCTION Bici(p_marca VARCHAR2, p_model VARCHAR2, p_pes FLOAT, p_preu FLOAT) RETURN SELF AS RESULT,
-    -- MAP MEMBER FUNCTION
-    MAP MEMBER FUNCTION funcioOrdenar RETURN FLOAT,
-	-- Declarem funció getModel
-    MEMBER FUNCTION getModel RETURN VARCHAR2,
-	-- Declarem funció getPreu
-    MEMBER FUNCTION getPreu RETURN FLOAT,
-    -- Declarem un toString
-    MEMBER PROCEDURE toString,
-	-- Declarem procediment setPreu
-    MEMBER PROCEDURE setPreu(p_preu FLOAT),
-    -- STATIC PROCEDURE
-    STATIC FUNCTION sumaValors(a INT, b INT) RETURN INT
+-- Creamos el objeto Bici con los atributos y metodos que queremosç
+create or replace type bici as OBJECT(
+    -- Atributos:
+    id number(4),
+    marca varchar2(30),
+    model varchar2(30),
+    tipus varchar2(20),
+    es_professional number(1),
+    pes float,
+    preu float,
+    -- Método constructor con los parametros p_marca, p_model, p_pes y p_preu
+    constructor function bici (p_marca varchar2, p_model varchar2, p_pes float, p_preu float) return self as result,
+    -- Método MAP MEMBER FUNCTION, que la utilizamos para ordenar por precio 
+    MAP member function funcionOrderar return float,
+    -- Método getModel que lo utilizaremos para mostrar el modelo de la bici
+    member function getModel return varchar2,
+    -- Método getPreu que lo utilizaremos para mostrar el precio de la bici
+    member function getPreu return float,
+    -- Método toString que lo utilizaremos para mostrar todos los atributos de la bici del objeto. 
+    member procedure toString,
+    -- Método setPreu que lo utilizaremos para modificar el precio de la bici. Esto es un procedimiento,
+    -- y no una funcion ya que no devuelve nada.
+    member procedure setPreu(p_preu float),
+    -- Método STATIC FUNCTION que utilizaremos para sumar dos valores enteros.
+    -- Los metodos staticos no necesitan un objeto para ser llamados, lo llamamos directamente con el nombre del objeto.
+    static function sumaValors (a int, b int) return int
     );
-	
-/* 
-	Aquesta barra permet executar més d'un bloc de codi
-	Ens mostra un error de 'Unsupported Command' però no cal donar-li importància.
-*/
+
 /
-	
-/*
-	TYPE BODY Bici:
-	Definició dels constructors, funcions i mètodes declarats en el TYPE anterior.
-*/
-CREATE OR REPLACE TYPE BODY Bici AS
-	-- Definim constructor amb dos paràmetres concrets
-	CONSTRUCTOR FUNCTION Bici (p_marca VARCHAR2, p_model VARCHAR2, p_pes FLOAT, p_preu FLOAT) RETURN SELF AS RESULT IS
-		BEGIN
-			SELF.marca := p_marca;
-			SELF.model := p_model;
-			RETURN ;
-		END;
-	-- Definició MAP MEMBER FUNCTION
-	MAP MEMBER FUNCTION funcioOrdenar RETURN FLOAT IS
-	    BEGIN
-	        IF SELF.Preu IS NULL OR SELF.Pes IS NULL THEN
-	            RETURN 0;
+
+Create or replace type body bici as 
+
+    -- Definimos el constructor con los parametros concretos. Al final del constructor no se pone return, ya que no devuelve nada,
+    -- pero si se pone un return vacio para que no de error.
+    constructor function bici (p_marca varchar2, p_model varchar2, p_pes float, p_preu float) return self as result is
+        begin 
+            self.marca := p_marca;
+            self.model := p_model;
+            self.pes := p_pes
+            self.preu := p_preu;
+            return;
+        end;
+
+    -- Definimos el metodo MAP MEMBER FUNCTION que utilizaremos para ordenar por precio.
+    -- Este metodo devuelve un float, que es el precio entre el peso.
+    map member function funcionOrderar return float is
+        begin
+            if self.preu is null or self.pes is null THEN
+                return 0;
             ELSE
-	            RETURN SELF.Preu / SELF.Pes;
-            END IF;
-	    END;
-	-- Definim els getters
-	MEMBER FUNCTION getModel RETURN VARCHAR2 IS
-		BEGIN
-			RETURN SELF.model;
-		END;
-	MEMBER FUNCTION getPreu RETURN FLOAT IS
-		BEGIN
-			RETURN SELF.preu;
-		END;
-	-- Definim toString
-	MEMBER PROCEDURE toString IS
-	    BEGIN
-	        DBMS_OUTPUT.PUT_LINE('La bicicleta és de la marca: '||SELF.marca||' i el seu model és: '||SELF.model);
-	    END;
-	-- Definim els setters
-	MEMBER PROCEDURE setPreu(p_preu FLOAT) IS
-		BEGIN
-			SELF.preu := p_preu;
-		END;
-	STATIC FUNCTION sumaValors(a INT, b INT) RETURN INT IS
-	    BEGIN
-	        RETURN a + b;
-	    END;
-END;
+                return self.preu / self.pes;
+            end if;
+        end;
+    
+    -- Definimos el metodo getModel que utilizaremos para mostrar el modelo de la bici.
+    member function getModel return varchar2 is
+        begin 
+            return self.model;
+        end;
 
-/* 
-	Aquesta barra permet executar més d'un bloc de codi
-	Ens mostra un error de 'Unsupported Command' però no cal donar-li importància.
-*/
+    -- Definimos el metodo getPreu que utilizaremos para mostrar el precio de la bici.
+    member function getPreu return float is
+        begin
+            return self.preu;
+        end;
+
+    -- Definimos el metodo toString que utilizaremos para mostrar los atributos de la bici del objeto.
+    member procedure toString is 
+        begin 
+            DBMS_OUTPUT.PUT_LINE('La bicicleta es de la marca: ' || self.marca || ' y el model es: ' || self.model);
+        end;
+    
+    -- Definimos el metodo setPreu que utilizaremos para modificar el precio de la bici.
+    member procedure setPreu(p_preu float) is
+        begin
+            self.preu := p_preu;
+        end;
+
+    -- Definimos el metodo STATIC FUNCTION que utilizaremos para sumar dos valores enteros.
+    static function sumaValors (a int, b int) return int is 
+        begin
+            return a + b;
+        end;
+end;
+
 /
 
--- DROP TABLE bicicletes;
+-- Creamos la tabla bicicletes con el objeto bici y el atributo nom_client
+-- Aqui el objeto bici se llama bicicleta, y el atributo nom_client se llama nom_client
+-- Osea bici es el tipo de objeto, y bicicleta es el nombre del objeto.
+create table bicicletes(
+    bicicleta bici,
+    nom_client varchar2(50)
+)
 
--- Creem una taula amb una columna de tipus complex (Bici)    :
-CREATE TABLE bicicletes(
-    bicicleta Bici,
-    nomClient VARCHAR2(40)
-);
+-- Seleccionamos todos los atributos de la tabla bicicletes
+select * from bicicletes;
 
--- Comprovem que no hi ha dades:	
-SELECT *
-FROM bicicletes;
-	
--- Inserim una fila a la taula	
-INSERT INTO bicicletes VALUES
-(new Bici(1, 'Canyon', 'Ultimate SL CF', 'Road', 1, 7.5, 2400),'Raimon');
+-- Insertamos un objeto bici en la tabla bicicletes, con los atributos que queremos, que son 
+-- los que hemos definido en el objeto bici en el constructor y el nombre del cliente.
+insert into bicicletes VALUES(
+    new bici(1, 'Canyon', 'Ultimate SL CF', 'Road', 1, 7.5, 2400), 'Raimon');
 
-DECLARE
-    bici_tmp Bici;
-BEGIN
-    -- Comprovem que hi ha una fila, però que el valor de la columna 1 no sap com imprimir-lo.
-    SELECT bicicleta
-    INTO bici_tmp
-    FROM bicicletes;
+-- Declaramos una variable de tipo bici, y seleccionamos el objeto bici de la tabla bicicletes
+-- Esta variable se llama bici_tmp, y el objeto bici se llama bici
+-- La variable bici la utilizamos para llamar a los metodos del objeto bici, porque no podemos
+-- llamar a los metodos directamente del objeto bici de la tabla bicicletes.
+Declare
+    bici_tmp bici;
+begin
+-- Seleccionamos el objeto bici de la tabla bicicletes, y lo guardamos en la variable bici_tmp
+-- Llamamos al metodo toString del objeto bici, que nos muestra todos los atributos del objeto bici.
+    select bicicleta
+    into bici_tmp
+    from bicicletes;
     bici_tmp.toString();
-
-END;
+end;

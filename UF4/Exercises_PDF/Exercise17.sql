@@ -80,3 +80,74 @@ BEGIN
 
     DBMS_OUTPUT.PUT_LINE(text);
 END;
+
+
+
+-----------------------------------------------------------------------------------------------------------------
+-----------------------------------------------------------------------------------------------------------------
+-----------------------------------------------------------------------------------------------------------------
+
+
+
+-- Crea un tipo para almacenar números de teléfono cuyos atributos serán:
+-- • Código del país VARCHAR2(2)
+-- • Código de la región VARCHAR2(3)
+-- • Número VARCHAR2(7)
+-- Ejemplo:00-124-3566987
+
+create or replace type telefon_t as object(
+    codi_pais varchar2(2),
+    codi_regio varchar2(3),
+    numero varchar2(7),
+    member procedure toString
+);
+
+/
+
+create or replace type body telefon_t as 
+    member procedure toString is
+    BEGIN
+        dbms_output.put_line(codi_pais || '-' || codi_regio || '-' || numero);
+    end;
+end;
+
+/
+
+-----------------------------------------------------------------------------------------------------------------
+
+-- a) Crea un tipo de datos colección que permita almacenar 5 números de teléfono
+
+drop type telefon_array;
+create or replace type telefon_array as varray(5) of telefon_t;
+
+/
+
+-----------------------------------------------------------------------------------------------------------------
+
+-- b) Crea una tabla “agenda” que permita almacenar los números de teléfono asociados a
+-- un nombre de persona.
+
+drop type agenda_t;
+create or replace type agenda_t as object(
+    nom varchar2(20),
+    cognom1 varchar2(20),
+    cognom2 varchar2(20),
+    telefons telefon_array
+);
+
+-----------------------------------------------------------------------------------------------------------------
+
+-- c) Inserta valores en la tabla para distintas personas.
+
+
+
+-----------------------------------------------------------------------------------------------------------------
+
+-- d) Modifica uno de los números de teléfono asociados a una persona que exista en la
+-- agenda
+
+-----------------------------------------------------------------------------------------------------------------
+
+-- e) Muestra por consola los números de teléfono completos de una de las personas que
+-- hayas insertado en la tabla
+

@@ -1,5 +1,5 @@
 CREATE OR REPLACE TYPE ordenarPorFechaNacimiento AS OBJECT (
-  dni VARCHAR2(9),
+  dni VARCHAR2(9), 
   nombre VARCHAR2(50),
   fechaNacimiento DATE,
   CONSTRUCTOR FUNCTION ordenarPorFechaNacimiento(dni VARCHAR2, nombre VARCHAR2, fechaNacimiento DATE) RETURN SELF AS RESULT,

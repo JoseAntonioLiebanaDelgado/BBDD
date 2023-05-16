@@ -18,37 +18,99 @@
 -- j) Crea una consulta que muestre la empresa para la que trabajan los empleados
 
 
-CREATE OR REPLACE TYPE address_t AS OBJECT(
-  type VARCHAR2(20),
-  number NUMBER,
-  street VARCHAR2(20),
-  floor NUMBER
+--a
+CREATE OR REPLACE TYPE direccion_t AS OBJECT(
+  tipo VARCHAR2(100),
+  num NUMBER,
+  calle VARCHAR2(100),
+  piso NUMBER
 );
 
-CREATE OR REPLACE TYPE address_list_t AS VARRAY(3) OF address_t;
+/
+--b
+CREATE OR REPLACE TYPE direcciones_t AS VARRAY(3) OF direccion_t;
 
-CREATE OR REPLACE TYPE company_t AS OBJECT(
-  cif VARCHAR2(20),
-  name VARCHAR2(20),
-  addresses address_list_t
+/
+--c
+CREATE OR REPLACE TYPE empresa_t AS OBJECT(
+  cif NUMBER,
+  nombre VARCHAR2(100),
+  direcciones direcciones_t
+)NOT FINAL;
+
+/
+--d
+CREATE OR REPLACE TYPE sociedad_anonima_t UNDER empresa_t(
+  num_accionistas NUMBER,
+  capital_social NUMBER,
+  pressupuesto NUMBER
 );
 
-CREATE OR REPLACE TYPE anonim_company_t UNDER company_t(
-  number_of_shareholders NUMBER,
-  social_capital NUMBER,
-  budget NUMBER
+/
+--e
+CREATE OR REPLACE TYPE socio_t AS OBJECT(
+  nombre VARCHAR2(100),
+  porcentaje NUMBER
+);
+/
+CREATE OR REPLACE TYPE nt_socio AS TABLE OF socio_t;
+/
+CREATE OR REPLACE TYPE sociedad_limitada_t UNDER empresa_t(
+  socios nt_socio
 );
 
-CREATE OR REPLACE TYPE limited_company_t UNDER company_t(
-  shareholders_list address_list_t
+/
+--f
+CREATE OR REPLACE TYPE empleado_t AS OBJECT(
+  id NUMBER,
+  empresa REF empresa_t
+);
+/
+CREATE TABLE empresas OF empresa_t(cif PRIMARY KEY);
+/
+CREATE TABLE empleados OF empleado_t (
+  id PRIMARY KEY
 );
 
-CREATE TABLE employees_tbl(
-  name VARCHAR2(20),
-  company REF company_t
+/
+--g
+CREATE TABLE sociedades_anonimas OF sociedad_anonima_t(cif PRIMARY KEY);
+/
+INSERT INTO sociedades_anonimas VALUES(
+  sociedad_anonima_t(123,'test',
+    direcciones_t(
+      direccion_t('t',1,'calle',1),
+      direccion_t('t',1,'calle',1)
+    ),
+    12,12000,2000));
+
+/
+--h
+CREATE TABLE sociedades_limitadas OF sociedad_limitada_t(cif PRIMARY KEY) NESTED TABLE socios STORE AS socios_tab;
+/
+INSERT INTO sociedades_limitadas VALUES(
+  sociedad_limitada_t(124,'test',
+    direcciones_t(
+      direccion_t('t',1,'calle',1),
+      direccion_t('t',1,'calle',1)
+    ),
+    nt_socio(
+      socio_t('aaa',20),
+      socio_t('bbb',20),
+      socio_t('ccc',20),
+      socio_t('ddd',40)
+    )
+  )
 );
 
-CREATE TABLE anonim_companies_tbl OF anonim_company_t (cif PRIMARY KEY);
+/
+--i      
+INSERT INTO empleados VALUES(
+  empleado_t(1,(SELECT REF(s) FROM sociedades_anonimas s WHERE s.cif = 123)));
+/
+INSERT INTO empleados VALUES(
+  empleado_t(2,(SELECT REF(s) FROM sociedades_limitadas s WHERE s.cif = 124)));
 
-INSERT INTO anonim_companies_tbl VALUES ('123456789','Empresa1',address_list_t(address_t('Fiscal',1,'Calle1',1),address_t('Postal',2,'Calle2',2),address_t('Administrativa',3,'Calle3',3)));
-
+/
+--j
+SELECT e.id, e.empresa.cif FROM empleados e;

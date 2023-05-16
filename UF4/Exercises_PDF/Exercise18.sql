@@ -26,3 +26,81 @@
 -- DE
 -- TELEFONIA’
 -- e) Elimina el plano cuyo título es ‘SEGURIDAD Y SALUD’
+
+
+
+
+CREATE OR REPLACE type array_ingenieros as varray(2) OF VARCHAR2(50);
+
+/
+
+CREATE OR REPLACE TYPE plano_t AS OBJECT(
+  idno NUMBER,
+  titulo VARCHAR2(100),
+  nombre_ingenieros array_ingenieros
+);
+
+/
+
+CREATE OR REPLACE TYPE nt_planos AS TABLE OF plano_t;
+
+/
+
+CREATE OR REPLACE TYPE jefes_proyecto_t AS OBJECT(
+  idno NUMBER,
+  nombre VARCHAR2(50),
+  telefono VARCHAR2(9)
+);
+
+/
+
+CREATE OR REPLACE TYPE proyecto_t AS OBJECT(
+  idno NUMBER,
+  nombre VARCHAR2(100),
+  fecha_entrega DATE,
+  planos nt_planos,
+  jefes_proyecto_t_ref REF jefes_proyecto_t
+);
+
+/
+
+CREATE TABLE jefes_proyecto_table OF jefes_proyecto_t(idno PRIMARY KEY);
+
+/
+
+CREATE TABLE proyectos_table OF proyecto_t (
+  idno PRIMARY KEY,  
+  FOREIGN KEY (jefes_proyecto_t_ref) REFERENCES jefes_proyecto_table
+) NESTED TABLE planos STORE AS planos_tab;
+
+/
+--a
+INSERT INTO jefes_proyecto_table values (jefes_proyecto_t(1, 'Jefe 1', '931234567'));
+
+/
+INSERT INTO proyectos_table values (
+      proyecto_t(01,'PROYECTO DEALUS','01-DEC-2014',
+          nt_planos(
+              plano_t(01,'SITUACION Y EMPLAZAMIENTO', array_ingenieros('ingeniero A', 'ingeniero B')),
+              plano_t(02,'SERVICIOS AFECTADOS', array_ingenieros('ingeniero C', 'ingeniero D')),
+              plano_t(03,'SEGURIDAD Y SALUD', array_ingenieros('ingeniero E', 'ingeniero F'))),   (select REF(j) from jefes_proyecto_table j where j.idno=1)));
+
+/
+--b
+UPDATE TABLE  (SELECT pt.planos FROM proyectos_table pt WHERE pt.idno=01)
+  i SET i.nombre_ingenieros=array_ingenieros('Ingeniero C') WHERE i.idno=02;
+
+/
+--c
+INSERT INTO TABLE(SELECT pt.planos FROM proyectos_table pt WHERE pt.idno=01) VALUES (
+          plano_t(04,'REPLANTEO INICIAL', array_ingenieros('ingeniero G', 'ingeniero H')));
+
+/
+--d
+UPDATE TABLE (SELECT pt.planos FROM proyectos_table pt where pt.idno=01)
+    i SET i.titulo='SERVICIOS AFECTADOS EN RED DE TELEFONIA' WHERE i.idno=02;
+
+/
+--e
+DELETE FROM TABLE (SELECT pt.planos FROM proyectos_table pt where pt.idno=01) i WHERE i.titulo='SEGURIDAD Y SALUD'; 
+

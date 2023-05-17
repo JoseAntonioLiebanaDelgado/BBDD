@@ -86,6 +86,7 @@ END;
 
 /
 -- b)
+-- Creamos una tabla de objetos de tipo person_t con clave primaria idno y insertamos los objetos creados en el apartado anterior
 CREATE TABLE personas_table OF person_t (idno PRIMARY KEY);
 /
 INSERT INTO personas_table VALUES(person_t(12,'ISMAEL','BELTRAN','15-FEB-1995','22446688'));

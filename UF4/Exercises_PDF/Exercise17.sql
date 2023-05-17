@@ -109,10 +109,12 @@ CREATE TABLE agenda_table (
 
 /
 -- c)
+-- Insertamos un en la tabla agenda_table un registro con id=1, name='John' y dos números de teléfono
 INSERT INTO agenda_table VALUES(1,'John',phones_t(phone_t('00','124','3566987'),phone_t('01','125','3566988')));
 
 /
 -- d)
+-- Modificamos el registro con id=1 y le añadimos un nuevo número de teléfono, hay que hacer un update de la colección entera
 UPDATE agenda_table SET phones=phones_t(phone_t('00','124','3566987'),phone_t('01','125','3566999')) WHERE id=1;
 
 /

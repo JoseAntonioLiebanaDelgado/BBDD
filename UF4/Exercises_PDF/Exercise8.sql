@@ -70,10 +70,7 @@ CREATE OR REPLACE TYPE proveedor_t AS OBJECT(
 /
 
 -- Con esto estamos diciendo que el tipo categoria_t tiene una función map 
--- que devuelve un varchar2. Se ordena por el nombre de la 
--- categoría de manera ascendente. Un ejemplo seria que si tenemos dos categorias
--- una con nombre 'ab' y otra con nombre 'abc' la que se ordenaria primero seria
--- la que tiene nombre 'ab' porque es la que esta primero en el abecedario.
+-- que devuelve un varchar2. 
 CREATE OR REPLACE TYPE BODY proveedor_t AS
   MAP MEMBER FUNCTION ordenarCif RETURN VARCHAR2 IS
   BEGIN

@@ -63,7 +63,7 @@ CREATE OR REPLACE TYPE proyecto_t AS OBJECT(
 );
 
 /
-
+-- Ceamos una tabla de objetos para jefes de proyecto
 CREATE TABLE jefes_proyecto_table OF jefes_proyecto_t(idno PRIMARY KEY);
 
 /
@@ -75,9 +75,11 @@ CREATE TABLE proyectos_table OF proyecto_t (
 
 /
 --a
+-- Insertamos un jefe de proyecto
 INSERT INTO jefes_proyecto_table values (jefes_proyecto_t(1, 'Jefe 1', '931234567'));
 
 /
+-- Insetamos un proyecto
 INSERT INTO proyectos_table values (
       proyecto_t(01,'PROYECTO DEALUS','01-DEC-2014',
           nt_planos(

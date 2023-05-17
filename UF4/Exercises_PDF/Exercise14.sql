@@ -11,13 +11,12 @@ CREATE OR REPLACE TYPE employee_t AS OBJECT(
 );
 
 /
-
+--Creamos una tabla de objetos de tipo employee_t
 CREATE TABLE employees_tbl OF employee_t (name PRIMARY KEY);
 
 /
 
 INSERT INTO employees_tbl VALUES ('Empleado1',NULL);
-
 /
-
+-- Insertamos un empleado que tendrá como jefe al primero
 INSERT INTO employees_tbl VALUES ('Empleado2',(SELECT REF(e) FROM employees_tbl e WHERE e.name='Empleado1'));

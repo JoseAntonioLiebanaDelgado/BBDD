@@ -119,6 +119,9 @@ END;
 /
 
 CREATE TABLE immuebles_table (
+  -- Creamos un objeto de tipo inmueble que lo utilizaremos en la tabla en vez de los tipos de inmuebles.
+  -- inmueble_t es el tipo de objeto que hemos creado.
+  -- inmueble es el nombre del objeto que hemos creado.
   immueble immueble_t,
   fecha_alta DATE,
   CONSTRAINT pk_immuebles_table PRIMARY KEY(immueble.id)
@@ -154,4 +157,5 @@ SELECT i.immueble.show() FROM immuebles_table i WHERE i.immueble.precio BETWEEN 
 SELECT i.immueble.show() FROM immuebles_table i WHERE VALUE(i.immueble) IS OF TYPE (vivienda_t);
 /
 -- Podemos hacelo sin ella:
+-- Seleccionamos todos los inmuebles que sean de tipo vivienda_t, y mostramos su descripción.
 SELECT i.immueble.show() FROM immuebles_table i WHERE (i.immueble) IS OF TYPE (vivienda_t);

@@ -33,7 +33,7 @@ CREATE OR REPLACE TYPE BODY noticia_t AS
 END;
 
 /
-
+-- Creamos la tabla de objetos noticias_obj con el tipo noticia_t como tipo de dato.
 CREATE TABLE noticias_obj OF noticia_t (codigo PRIMARY KEY);
 
 /
@@ -59,12 +59,11 @@ END;
 
 /
 
-
 -- b) Crea una tabla que contenga un objeto noticia_t y un varchar2 que se llame sección.
 -- La clave primaria de la tabla debe ser el atributo código del objeto noticia. Inserta 3 valores y
 -- comprueba que se han insertado correctamente.
 
-DROP TABLE noticias_obj2;
+DROP TABLE noticias_obj2;                                                                                       
 
 
 CREATE TABLE noticias_obj2(

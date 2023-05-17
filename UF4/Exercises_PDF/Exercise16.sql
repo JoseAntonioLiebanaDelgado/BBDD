@@ -22,6 +22,8 @@ create or replace type mascota_t as object(
 );
 -----------------------------------------------------------------------------------------------------------------------
 -- b) Inserta registros en las tablas
+-- Creamos las tablas de objetos de tipo veterinari_t y mascota_t. 
+-- Estas tablas de objetos nos serviran para poder insertar objetos de tipo veterinari_t y mascota_t.
 create table veterinari_tbl of veterinari_t (num_colegiat primary key);
 / 
 create table mascota_tbl of mascota_t (idmas primary key);

@@ -2,37 +2,86 @@
 -- Inserta 3 valores y comprueba que los valores se han insertado correctamente. Realiza un SELECT de la
 -- tabla noticias_obj para verificar que las noticias se han insertado correctamente.
 
-CREATE OR REPLACE TYPE noticia_t AS OBJECT (
-    codigo NUMBER,
-    titulo VARCHAR2(50),
-    texto VARCHAR2(4000),
-    fecha DATE
+DROP TABLE noticias_obj;
+
+/
+
+CREATE OR REPLACE TYPE noticia_t AS OBJECT(
+  codigo NUMBER,
+  fecha DATE,
+  num_dias_publicado NUMBER,
+  texto VARCHAR2(500),
+  MEMBER FUNCTION deberia_publicada RETURN BOOLEAN,
+  MEMBER PROCEDURE displayDetails
 );
 
-CREATE TABLE noticias_obj OF noticia_t (
-    codigo PRIMARY KEY
-);
+/
 
-INSERT INTO noticias_obj VALUES (1, 'Noticia 1', 'Texto noticia 1', SYSDATE);
-INSERT INTO noticias_obj VALUES (2, 'Noticia 2', 'Texto noticia 2', SYSDATE);
-INSERT INTO noticias_obj VALUES (3, 'Noticia 3', 'Texto noticia 3', SYSDATE);
+CREATE OR REPLACE TYPE BODY noticia_t AS
+  MEMBER FUNCTION deberia_publicada RETURN BOOLEAN IS
+  BEGIN
+    IF(fecha-SYSDATE > num_dias_publicado) THEN
+      RETURN TRUE;
+    ELSE
+      RETURN FALSE;
+    END IF;
+  END;
+  MEMBER PROCEDURE displayDetails IS
+  BEGIN
+    DBMS_OUTPUT.PUT_LINE(TO_CHAR(codigo)||' '||fecha||' '||TO_CHAR(num_dias_publicado)||' '||texto);
+  END;
+END;
 
-SELECT * FROM noticias_obj;
+/
+
+CREATE TABLE noticias_obj OF noticia_t (codigo PRIMARY KEY);
+
+/
+
+INSERT INTO noticias_obj VALUES (noticia_t(1,'18-JAN-2020',2,'Hola'));
+
+/
+
+INSERT INTO noticias_obj VALUES (noticia_t(2,'18-JAN-2020',2,'Hola'));
+
+/
+
+INSERT INTO noticias_obj VALUES (noticia_t(3,'18-JAN-2020',2,'Hola'));
+
+/
+set serveroutput on;
+DECLARE
+  noticia noticia_t;
+BEGIN
+  SELECT VALUE(n) INTO noticia FROM noticias_obj n WHERE n.codigo = 1;
+  noticia.displayDetails();
+END;
+
+/
 
 
 -- b) Crea una tabla que contenga un objeto noticia_t y un varchar2 que se llame sección.
 -- La clave primaria de la tabla debe ser el atributo código del objeto noticia. Inserta 3 valores y
 -- comprueba que se han insertado correctamente.
 
-CREATE TABLE noticias_obj_seccion (
-    noticia noticia_t,
-    seccion VARCHAR2(50),
-    CONSTRAINT pk_noticia_obj_seccion PRIMARY KEY (noticia.codigo)
+DROP TABLE noticias_obj2;
+
+
+CREATE TABLE noticias_obj2(
+noticia noticia_t,
+seccion VARCHAR2(50),
+CONSTRAINT PK_noticia2 PRIMARY KEY(noticia.codigo)
+
 );
 
-INSERT INTO noticias_obj_seccion (noticia, seccion) VALUES (noticia_t(1, 'Noticia 1', 'Texto de la noticia 1', SYSDATE), 'Sección 1');
-INSERT INTO noticias_obj_seccion (noticia, seccion) VALUES (noticia_t(2, 'Noticia 2', 'Texto de la noticia 2', SYSDATE), 'Sección 2');
-INSERT INTO noticias_obj_seccion (noticia, seccion) VALUES (noticia_t(3, 'Noticia 3', 'Texto de la noticia 3', SYSDATE), 'Sección 3');
+/
 
-SELECT * FROM noticias_obj_seccion;
+INSERT INTO noticias_obj2 VALUES (noticia_t('4321','18-JAN-2020',2,'Hola'),'seccion1');
 
+/
+
+INSERT INTO noticias_obj2 VALUES (noticia_t('12345','18-JAN-2020',5,'Has comprado leche'),'seccion2');
+
+/
+
+INSERT INTO noticias_obj2 VALUES (noticia_t('123456','18-JAN-2020',6,'xD'),'seccion3');

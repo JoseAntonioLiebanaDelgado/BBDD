@@ -102,6 +102,7 @@ FROM bicicletes;
 	
 -- Inserim una fila a la taula	
 INSERT INTO bicicletes VALUES
+-- EN el parentesis de mas afuera es el constructor y el de dentro es el de la clase
 (new Bici(1, 'Canyon', 'Ultimate SL CF', 'Road', 1, 7.5, 2400),'Raimon');
 
 DECLARE

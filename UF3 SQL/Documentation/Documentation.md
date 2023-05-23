@@ -4,7 +4,7 @@
 - La instrucción SELECT INTO se utiliza para crear una tabla nueva a partir de los resultados de una consulta SELECT.
 - La sintaxis general de SELECT INTO es la siguiente: 
 
-SELECT column1, column2, ...   
+SELECT column1, column2, ...    
 INTO new_table_name 
 FROM existing_table_name 
 WHERE condition;  

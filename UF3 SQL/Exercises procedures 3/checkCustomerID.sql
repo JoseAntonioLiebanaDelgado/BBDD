@@ -6,7 +6,7 @@ En cas de que exiteixi, que retorni el seu ContactName.
 Si no existeix que mostri un missatge d'error.
 Aquest procediment ha de tenir dos paràmetres (1 d'entrada i un de sortida).
 */
-
+ 
 /*
 CREATE PROCEDURE checkCustomerID(IN vCustomerID VARCHAR(??)
 								, OUT vContactName VARCHAR(??))

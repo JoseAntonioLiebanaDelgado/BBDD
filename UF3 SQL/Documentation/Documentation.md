@@ -6,7 +6,7 @@
 
 SELECT column1, column2, ...    
 INTO new_table_name 
-FROM existing_table_name 
+FROM existing_table_name  
 WHERE condition;  
  
 - Esta consulta selecciona las columnas especificadas de la tabla existing_table_name que cumplen la condición especificada en el WHERE,

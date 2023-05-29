@@ -5,7 +5,7 @@ static function suma (a number, b number) return number,
 static function resta (a number,b number) return number,
 static function multilpicacio (a number, b number) return number,
 static function divisio (a number,b number) return number    
-);
+); 
 
 create or replace type body Calculadora as
 static function suma (a number, b number) return number is

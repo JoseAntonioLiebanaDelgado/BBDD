@@ -1,7 +1,7 @@
 CREATE OR REPLACE TYPE Bici AS OBJECT(
   marca VARCHAR2(30),
   model VARCHAR2(30),
-  tipus VARCHAR2(20),
+  tipus VARCHAR2(20), 
   es_professional NUMBER(1),
   pes FLOAT,
   preu FLOAT,

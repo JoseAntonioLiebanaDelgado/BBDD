@@ -12,7 +12,7 @@ CREATE PROCEDURE checkCustomerID(IN vCustomerID VARCHAR(??)
 								, OUT vContactName VARCHAR(??))
                                 */
 
--- CALL checkCustomerID('CustomerID', @NomGana);
+-- CALL checkCustomerID('CustomerID', @NomGana); 
 
 
 use northwind;

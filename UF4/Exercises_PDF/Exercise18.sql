@@ -5,6 +5,7 @@
 -- Cada proyecto tiene asociado un conjunto de planos. Un plano viene definido por un título y
 -- los nombres de los ingenieros firmantes. Como máximo un plano puede estar firmado por 2
 -- ingenieros.
+
 -- Se desea disponer de una tabla de jefes de proyecto con su nombre y teléfono, y una tabla de
 -- proyectos con el nombre del proyecto, la fecha de finalización y el jefe de proyecto asignado.
 -- Tener en cuenta que un proyecto está dirigido por un jefe de proyecto (un proyecto siempre
@@ -12,11 +13,44 @@
 -- Construye los tipos de objetos necesarios, así como las tablas, haciendo uso de referencias
 -- a objetos. Inserta registros en las tablas de jefes de proyecto y de proyectos.
 -- Sobre uno de los proyectos de la tabla de proyectos que hayas definido:
+
+
+-- b) Actualiza la tabla para que en el plano 02, sólo este como ingeniero firmante ‘IngenieroC’
+
+-- c) Introduce un nuevo plano con los siguientes datos:
+-- ID TITULO INGENIEROS FIRMANTES
+-- 04 REPLANTEO INICIAL Ingeniero G, Ingeniero H
+
+-- d) Actualiza el título del plano con id=02 para que sea ‘SERVICIOS AFECTADOS EN RED DE TELEFONIA’
+
+-- e) Elimina el plano cuyo título es ‘SEGURIDAD Y SALUD’
+
+
+
+create or replace type jefe_proyecto_t as object(
+    nombre varchar2,
+    telefono varchar2
+)
+
+create or replace type proyecto_t as object(
+    nombre varchar2,
+    fecha_finalizacion date
+    ref jefe_proyecto_t
+)
+
+create or replace type plano_t as object(
+    titulo varchar2,
+    ingeniero1_firmantes varchar2,
+    ingeniero2_firmantes varchar2
+    ref proyecto_t
+)
+
 -- a) Introduce los siguientes planos:
 -- ID TITULO INGENIEROS FIRMANTES
 -- 01 SITUACION Y EMPLAZAMIENTO Ingeniero A, Ingeniero B
 -- 02 SERVICIOS AFECTADOS Ingeniero C, Ingeniero D
 -- 03 SEGURIDAD Y SALUD Ingeniero E, Ingeniero F
+<<<<<<< Updated upstream
 -- b) Actualiza la tabla para que en el plano 02, sólo este como ingeniero firmante ‘Ingeniero
 -- C’
 -- c) Introduce un nuevo plano con los siguientes datos:
@@ -106,3 +140,16 @@ UPDATE TABLE (SELECT pt.planos FROM proyectos_table pt where pt.idno=01)
 --e
 DELETE FROM TABLE (SELECT pt.planos FROM proyectos_table pt where pt.idno=01) i WHERE i.titulo='SEGURIDAD Y SALUD'; 
 
+=======
+
+create or replace body plano_t as
+    member procedure toString is
+    BEGIN
+        dbms_output.put_line(titulo || '-' || ingeniero1_firmantes || '-' || ingeniero2_firmantes);
+    end;
+end;
+
+/
+
+create or replace type plano_array as varray(3) of plano_t;
+>>>>>>> Stashed changes

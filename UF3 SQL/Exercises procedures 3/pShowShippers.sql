@@ -1,43 +1,34 @@
-/*
-Aneu a Northwind DB.
-Creeu un procediment que mostri les dades de shippers per pantalla.
-*/
+USE northwind;
 
-use northwind;
+DELIMITER $$
 
-DELIMITER HOLA
-DROP PROCEDURE IF EXISTS showShippers HOLA
+DROP PROCEDURE IF EXISTS showShippers $$
 
 CREATE PROCEDURE showShippers()
 BEGIN
-
-	DECLARE semafor INT DEFAULT 0;
+    DECLARE vShipperID INT;
+    DECLARE vCompanyName VARCHAR(40);
+    DECLARE vPhone VARCHAR(24);
     
-    DECLARE vShipperID int(11);
-    DECLARE vCompanyName varchar(40);
-    DECLARE vPhone varchar(24);
-    -- "Selecciona de"
-    DECLARE cursor1 CURSOR FOR (SELECT * FROM shippers);
-    DECLARE CONTINUE HANDLER FOR NOT FOUND SET semafor = 1;
+    DECLARE cursor1 CURSOR FOR SELECT ShipperID, CompanyName, Phone FROM shippers;
+    DECLARE CONTINUE HANDLER FOR NOT FOUND SET @semafor = 1;
     
-    open cursor1;
+    OPEN cursor1;
     
     bucle: LOOP
-    -- "Almacena en"
-		FETCH cursor1 INTO vShipperID, vCompanyName, vPhone;
+        FETCH cursor1 INTO vShipperID, vCompanyName, vPhone;
         
-		IF semafor=1 THEN
-			LEAVE bucle; -- Sortim del loop
-		END IF;
+        IF @semafor = 1 THEN
+            LEAVE bucle; 
+        END IF;
         
         SELECT vShipperID, vCompanyName, vPhone;
         
     END LOOP bucle;
+    
     CLOSE cursor1;
+END $$
 
-END HOLA
 DELIMITER ;
 
 CALL showShippers();
-
-

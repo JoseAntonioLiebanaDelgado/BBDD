@@ -14,7 +14,7 @@ y luego crea una nueva tabla llamada new_table_name con esos datos.
 En el caso del SELECT INTO, solo se puede devolver un resultado en el select (una fila), ya que sino no podríamos guardarlo en una variable.
 
 - Por otro lado, la instrucción SELECT INTO OUTFILE se utiliza para exportar los resultados de una consulta SELECT a un archivo en el sistema de archivos del servidor.
-La sintaxis general de SELECT INTO OUTFILE es la siguiente:
+La sintaxis general de SELECT INTO OUTFILE es la siguiente: 
 
 SELECT column1, column2, ...
 INTO OUTFILE '/path/to/file.csv'

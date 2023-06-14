@@ -69,56 +69,25 @@
 -- valors de tots els atributs de la taula que l'ha disparat.
 
 
-delimiter // 
-create trigger alerta_empleat
-before insert on Empleat
-for each row
-begin
-    declare missatge varchar(50);
+DELIMITER $$
+CREATE TRIGGER empleat_check_fields BEFORE INSERT ON Empleat
+FOR EACH ROW
+BEGIN
+    DECLARE field_missing VARCHAR(100);
     
-    if new.nom_empleat is null then
-        set missatge = 'Falta omplir el nom';
-        insert into Alertes (taula_afectada, camp_afectat, descripcio) 
-        values ('Empleat', 'nom_empleat', missatge);
-    end if;
+    IF NEW.num_vendes IS NULL THEN
+        SET field_missing = 'num_vendes';
+        INSERT INTO Alertes (taula_afectada, camp_afectat, descripcio)
+        VALUES ('Empleat', field_missing, CONCAT('El camp ', field_missing, ' està buit'));
+    END IF;
 
-    if new.cognom_empleat is null then
-        set missatge = 'Falta omplir el cognom';
-        insert into Alertes (taula_afectada, camp_afectat, descripcio) 
-        values ('Empleat', 'cognom_empleat', missatge);
-    end if;
+    IF NEW.id_concesionari IS NULL THEN
+        SET field_missing = 'id_concesionari';
+        INSERT INTO Alertes (taula_afectada, camp_afectat, descripcio)
+        VALUES ('Empleat', field_missing, CONCAT('El camp ', field_missing, ' està buit'));
+    END IF;
+END$$
+DELIMITER ;
 
-    if new.telefon_empleat is null then
-        set missatge = 'Falta omplir el telefon';
-        insert into Alertes (taula_afectada, camp_afectat, descripcio) 
-        values ('Empleat', 'telefon_empleat', missatge);
-    end if;
-
-    if new.direccio_empleat is null then
-        set missatge = 'Falta omplir la direccio';
-        insert into Alertes (taula_afectada, camp_afectat, descripcio) 
-        values ('Empleat', 'direccio_empleat', missatge);
-    end if;
-
-    if new.data_naixement_empleat is null then
-        set missatge = 'Falta omplir la data de naixement';
-        insert into Alertes (taula_afectada, camp_afectat, descripcio) 
-        values ('Empleat', 'data_naixement_empleat', missatge);
-    end if;
-
-    if new.num_vendes is null then
-        set missatge = 'Falta omplir el numero de vendes';
-        insert into Alertes (taula_afectada, camp_afectat, descripcio) 
-        values ('Empleat', 'num_vendes', missatge);
-    end if;
-
-    if new.id_concesionari is null then
-        set missatge = 'Falta omplir el id del concesionari';
-        insert into Alertes (taula_afectada, camp_afectat, descripcio) 
-        values ('Empleat', 'id_concesionari', missatge);
-    end if;
-
-end; //
-delimiter ;
 
 

@@ -61,7 +61,7 @@
 
 
 -- Exercici 4: Crea tot el necessari per automatitzar un backup de les taules Venda, client i Persona 
--- de la bbdd. EL nom de les taules de backup ha de ser bkp_<nom taula> i s'ha de realitzar a la mateixa 
+-- de la bbdd. El nom de les taules de backup ha de ser bkp_<nom taula> i s'ha de realitzar a la mateixa 
 -- base de dades en la que estem treballant, creant l'estructura de les taules de backup nomes si es 
 -- necessari i esborrant la informacio que puguin contenir abans de bolcar-hi de nou informacio de les 
 -- taules base. Cal fer servir les sentencies de create like i insert des de select.
@@ -112,20 +112,28 @@ call backup();
 
 
 -- Podria hacerse asi tambien:
-
+-- Exercici 4: Crea tot el necessari per automatitzar un backup de les taules Venda, client i Persona 
+-- de la bbdd. El nom de les taules de backup ha de ser bkp_<nom taula> i s'ha de realitzar a la mateixa 
+-- base de dades en la que estem treballant, creant l'estructura de les taules de backup nomes si es 
+-- necessari i esborrant la informacio que puguin contenir abans de bolcar-hi de nou informacio de les 
+-- taules base. Cal fer servir les sentencies de create like i insert des de select.
+-- Escriu també un exemple de call.
 
 DELIMITER //
 CREATE PROCEDURE backup_tables()
 BEGIN
 
+-- estas 3 lineas crean las tablas de backup si no existen
 create table if not exists bkp_Venda like Venda;
 create table if not exists bkp_Client like Client;
 create table if not exists bkp_Persona like Persona;
 
+-- estas 3 lineas borran la informacion de las tablas de backup
 truncate table bkp_Venda;
 truncate table bkp_Client;
 truncate table bkp_Persona;
 
+-- estas 3 lineas insertan la informacion de las tablas originales en las tablas de backup
 insert into bkp_Venda select * from Venda;
 insert into bkp_Client select * from Client;
 insert into bkp_Persona select * from Persona;

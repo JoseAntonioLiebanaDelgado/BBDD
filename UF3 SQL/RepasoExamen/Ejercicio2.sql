@@ -113,7 +113,8 @@ begin
     declare nom_fitxer varchar(50);
     declare sentencia varchar(100);
     set nom_fitxer = 'detall-models-marca.csv';
-    set sentencia = concat('select nom_model, any_creacio into outfile \'./', nom_fitxer, '\' fields terminated by \';\' lines terminated by \'\n\' from Model where id_marca = (select id_marca from Marca where nom_marca = \'', marca, '\');');
+    set sentencia = concat('select nom_model, any_creacio into outfile \'./', nom_fitxer, '\' fields terminated by \';\' lines terminated by \'\n\' 
+    from Model where id_marca = (select id_marca from Marca where nom_marca = \'', marca, '\');
     prepare stmt from sentencia;
     execute stmt;
     deallocate prepare stmt;

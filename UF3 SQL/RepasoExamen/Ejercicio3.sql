@@ -86,8 +86,10 @@ begin
         select missatge;
 -- Si la suma no es null, es a dir, hi ha algun resultat.. 
     else
--- Llavors imprimim la suma
+-- Llavors fem l'operacio de suma_vendes = suma
         set suma_vendes = suma;
+-- Amb el select imprimim la suma
+        select suma_vendes;
 -- Amb end if finalitzem el if
     end if;
 -- Amb end finalitzem el procediment

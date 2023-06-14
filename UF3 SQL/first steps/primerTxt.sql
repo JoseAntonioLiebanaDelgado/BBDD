@@ -1,28 +1,41 @@
 
 --Creacion de ficheros
+
+-- Esta comanda crea un fichero con el nombre country.txt
 SELECT nombre INTO OUTFILE 'country.txt'
 FIELDS TERMINATED BY ',' OPTIONALLY ENCLOSED BY '"'
 LINES TERMINATED BY ';' FROM country;
 
+
+-- Esta comanda crea un fichero con el nombre newCountry.txt en la ruta especificada
 SELECT * INTO OUTFILE 'C:/Users/jose/Desktop/DEVELOPER/BBDD/UF3 BBDD SQL/newCountry.csv' 
 FIELDS TERMINATED BY ',' OPTIONALLY ENCLOSED BY '"' 
 LINES TERMINATED BY ';\n' FROM country;
 
+
+-- Esta comanda crea un fichero con el nombre country.csv en la ruta especificada y exporta los nombres de los paises que pertenecen al continente Europe
+-- con el numero de ciudades que hay en cada pais
 SELECT Name, COUNT(city) INTO OUTFILE 'C:/Users/jose/Desktop/DEVELOPER/BBDD/UF3 BBDD SQL/country.csv'
 FIELDS TERMINATED BY ',' OPTIONALLY ENCLOSED BY '"'
 LINES TERMINATED BY ';\n' 
 FROM country
 WHERE continent = 'Europe';
 
+
+-- Esta comanda crea un fichero con el nombre country2.csv en la ruta especificada y exporta el codigo, nombre y continente de los paises que pertenecen al continente Europe
 SELECT code, name, continent  INTO OUTFILE 'C:/Users/jose/Desktop/DEVELOPER/BBDD/UF3 BBDD SQL/country2.csv'
 FIELDS TERMINATED BY ',' LINES TERMINATED BY ';\n' FROM country
-where continent;
+where continent = 'Europe';
 
 ------------------------------------------------
 
---Creamos una tabla
+-- Creamos una base de datos llamada Lol
+
+-- Con create database creamos una base de datos
 CREATE DATABASE Lol DEFAULT CHARACTER SET 'utf8' DEFAULT COLLATE 'utf8_bin';
+-- Con use cambiamos a la base de datos Lol
 USE Lol;
+-- Con drop table borramos la tabla si existe
 CREATE TABLE IF NOT EXISTS Champions (
     CardID INT AUTO_INCREMENT NOT NULL,
     name VARCHAR(20),

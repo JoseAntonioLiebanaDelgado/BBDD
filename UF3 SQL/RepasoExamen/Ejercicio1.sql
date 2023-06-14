@@ -74,6 +74,36 @@
 -- Per tant carregarem les dades usant sentencia dinámica per determinar el nom variable del fitxer. 
 -- Escriu també un exemple de call.
 
+-- Aquesta seguent linea s'encarrega de crear un delimitador de sentencies per poder crear el procediment
+delimiter //
+-- Aquesta seguent linea crea el procediment, el nom del procediment es carrega_vendes
+create procedure carrega_vendes()
+-- Aquesta seguent linea indica que el procediment comença
+begin
+-- Aquestes 3 linies declara les variables que s'utilitzaran dins del procediment
+    declare data_actual date;
+    declare nom_fitxer varchar(50);
+    declare sentencia varchar(100);
+-- Aquestes 3 linies assignen valors a les variables declarades anteriorment
+    set data_actual = curdate();
+    set nom_fitxer = concat('vendes-', year(data_actual), '-', month(data_actual), '-', day(data_actual), '.csv');
+    set sentencia = concat('load data infile \'C:/Users/Alumne/Desktop/RepasoExamen/', nom_fitxer, '\' into table Venda fields terminated by \';\' lines terminated by \'\n\' ignore 1 lines;');
+-- Aquesta seguent linea prepara la sentencia que s'executara
+    prepare stmt from sentencia;
+-- Aquesta seguent linea executa la sentencia preparada anteriorment
+    execute stmt;
+-- Aquesta seguent linea allibera la sentencia preparada anteriorment
+    deallocate prepare stmt;
+-- Aquesta seguent linea indica que el procediment acaba
+end//
+-- Aquesta seguent linea indica que el delimitador de sentencies torna a ser el normal
+delimiter ;
+-- Aquesta seguent linea executa el procediment creat anteriorment
+call carrega_vendes();
+
+
+
+-- El mateix exercici anterior pero amb ruta relativa seria aixi:
 
 delimiter //
 create procedure carrega_vendes()
@@ -81,191 +111,13 @@ begin
     declare data_actual date;
     declare nom_fitxer varchar(50);
     declare sentencia varchar(100);
-
     set data_actual = curdate();
     set nom_fitxer = concat('vendes-', year(data_actual), '-', month(data_actual), '-', day(data_actual), '.csv');
-    set sentencia = concat('load data infile \'C:/Users/Alumne/Desktop/RepasoExamen/', nom_fitxer, '\' into table Venda fields terminated by \';\' lines terminated by \'\n\' ignore 1 lines;');
-    
+    set sentencia = concat('load data infile \'./', nom_fitxer, '\' into table Venda fields terminated by \';\' lines terminated by \'\n\' ignore 1 lines;');
     prepare stmt from sentencia;
     execute stmt;
     deallocate prepare stmt;
 end//
 delimiter ;
-
 call carrega_vendes();
 
-
--- Exercici 2: Crea un procediment on donada una marca de cotxes a traves d'un parametre d'entrada
--- ens exporti en un arxiu el nom dels models i l'any en que va sortir nomes per la mcarca seleccionda
--- (1 model per linia amb separador de files "\n"). El separaor de columnes sera ";".
-
--- El nom del fitxer resultant serà sempre el mateix: detall-models-marca.csv (suposarem que no existeix 
--- un fitxer amb el mateix nom previament).
-
--- EL fitxer de sortida podria quedar aixi per ls marca volskwagen (per defecte no s'exporten el nom de 
--- les columnes de les taules)
-
--- Golf; 1974
--- Polo; 1981
--- Touareg; 2002
-
--- Escriu també un exemple de call.
-
-
-delimiter //
-create procedure exporta_models_marca(in marca varchar(50))
-begin
-    declare nom_fitxer varchar(50);
-    declare sentencia varchar(100);
-
-    set nom_fitxer = 'detall-models-marca.csv';
-    set sentencia = concat('select nom_model, any_creacio into outfile \'C:/Users/Alumne/Desktop/RepasoExamen/', nom_fitxer, '\' fields terminated by \';\' lines terminated by \'\n\' from Model where id_marca = (select id_marca from Marca where nom_marca = \'', marca, '\');');
-    
-    prepare stmt from sentencia;
-    execute stmt;
-    
-    deallocate prepare stmt;
-end//
-delimiter ;
-
-call exporta_models_marca('Volkswagen');
-
-
--- Exercici 3: Crea un procediment que rebi l'id numeric d'un concesionari com a parametre d'entrada
--- i que retorni en un parametre de sortida el sumatori de les vendes que s'han fet ente tots els seus empleats 
--- (usarem la columna precalculada Empleat.num_vendes). En cas de no trobar cap resultat s'ha d'imprimir un 
--- missatge d'error. Escriu també un exemple de call. 
-
-
-delimiter //
-create procedure suma_vendes_concesionari(in id_concesionari int, out suma_vendes int)
-begin
-    declare suma int;
-    declare missatge varchar(50);
-    
-    set suma = (select sum(num_vendes) from Empleat where id_concesionari = id_concesionari);
-    
-    if suma is null then
-        set missatge = 'No s''ha trobat cap resultat';
-        select missatge;
-    else
-        set suma_vendes = suma;
-    end if;
-end//
-delimiter ;
-
-call suma_vendes_concesionari(1, @suma_vendes);
-select @suma_vendes;
-
-
--- Exercici 4: Crea tot el necessari per automatitzar un backup de les taules Venda, client i Persona 
--- de la bbdd. EL nom de les taules de backup ha de ser bkp_<nom taula> i s'ha de realitzar a la mateixa 
--- base de dadesen la que estem treballant, creant l'estreuctura de les taules de backup nomes si es 
--- necessari i esborrant la informacio que puguin contenir abans de bolcar-hi de nou informacio de les 
--- taules base. Cal fer servir les sentencies de create like i insert des de select.Escriu també un exemple de call.
-
-
-delimiter //
-create procedure backup()
-begin
-    declare nom_taula varchar(50);
-    declare sentencia varchar(100);
-    
-    set nom_taula = 'Venda';
-    set sentencia = concat('create table if not exists bkp_', nom_taula, ' like ', nom_taula, ';');
-    prepare stmt from sentencia;
-    execute stmt;
-    deallocate prepare stmt;
-    
-    set sentencia = concat('insert into bkp_', nom_taula, ' select * from ', nom_taula, ';');
-    prepare stmt from sentencia;
-    execute stmt;
-    deallocate prepare stmt;
-    
-    set nom_taula = 'Client';
-    set sentencia = concat('create table if not exists bkp_', nom_taula, ' like ', nom_taula, ';');
-    prepare stmt from sentencia;
-    execute stmt;
-    deallocate prepare stmt;
-    
-    set sentencia = concat('insert into bkp_', nom_taula, ' select * from ', nom_taula, ';');
-    prepare stmt from sentencia;
-    execute stmt;
-    deallocate prepare stmt;
-    
-    set nom_taula = 'Persona';
-    set sentencia = concat('create table if not exists bkp_', nom_taula, ' like ', nom_taula, ';');
-    prepare stmt from sentencia;
-    execute stmt;
-    deallocate prepare stmt;
-    
-    set sentencia = concat('insert into bkp_', nom_taula, ' select * from ', nom_taula, ';');
-    prepare stmt from sentencia;
-    execute stmt;
-    deallocate prepare stmt;
-end//
-delimiter ;
-
-call backup();
-
-
--- Exercici 5: Crea un trigger per tal de que sempre que s'afageixi algun registre a la taula Empleat,
--- comprovi si falta algun camp per informar (valor igual a null). De ser així inserirem una fila a la 
--- taula Alertes fent la indicacio corresponent especificant quin camp falta omplir. (fixa't en les 
--- columnes de la taula Alertes i decideix quin missatge posar-hi).
-
--- Pista: Recorda que dirant l'execucio d'un trigger disposem els operadors new i old per a comprovar els 
--- valors de tots els atributs de la taula que l'ha disparat.
-
-
-delimiter // 
-create trigger alerta_empleat
-before insert on Empleat
-for each row
-begin
-    declare missatge varchar(50);
-    
-    if new.nom_empleat is null then
-        set missatge = 'Falta omplir el camp nom_empleat';
-        insert into Alertes values (new.id_empleat, missatge);
-    end if;
-    
-    if new.cognom_empleat is null then
-        set missatge = 'Falta omplir el camp cognom_empleat';
-        insert into Alertes values (new.id_empleat, missatge);
-    end if;
-    
-    if new.data_naixement is null then
-        set missatge = 'Falta omplir el camp data_naixement';
-        insert into Alertes values (new.id_empleat, missatge);
-    end if;
-    
-    if new.num_vendes is null then
-        set missatge = 'Falta omplir el camp num_vendes';
-        insert into Alertes values (new.id_empleat, missatge);
-    end if;
-    
-    if new.id_concesionari is null then
-        set missatge = 'Falta omplir el camp id_concesionari';
-        insert into Alertes values (new.id_empleat, missatge);
-    end if;
-end//
-delimiter ;
-
-
--- Exercici 6: Activar la variable global que acciona els events.
--- Desenvolupa el codi necessari per als seguents events:
-
--- 1. Que s'executi un sol cop el proper dia 1 de maig a las 8:00:00 h del mati el procediment
--- realitzat en l'exercici 2 per a la marca Volkswagen.
-
-create event if not exists event1
-on schedule at '2021-05-01 08:00:00'
-do call exporta_models_marca('Volkswagen');
-
--- 2. Crea un event que executi el procediment de backup de l'exercici 4 setmana a partir del 3 
--- de maig de 2023 a les 02:00 h.
-
-create event if not exists event2
-on schedule every 1 week starting '2023-05-03 02:00:00'
-do call backup();
